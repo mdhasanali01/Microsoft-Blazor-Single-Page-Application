@@ -1,0 +1,114 @@
+﻿@page "/Positions/Edit/{id:int}"
+@using Blazor_CRUD.Shared.DTO;
+@using Blazor_CRUD.Shared.Models;
+@using Blazored.Toast.Services;
+@using System.Net.Http.Json;
+@inject HttpClient http
+@inject IToastService toastService
+    <div class="row">
+    <div class="col-12">
+        <EditForm Model="@position" OnValidSubmit="SavePosition">
+            <h3>Create Customer</h3>
+            <DataAnnotationsValidator />
+
+            <div class="form-group row mb-1">
+                <label class="col-form-label col-2 text-end" for="@position.PositionName">Agent Name</label>
+                <div class="col-7">
+                    <InputText @bind-Value="@position.PositionName" class="form-control" />
+                    <ValidationMessage For="@(()=>position.PositionName)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+               
+                <div class="col-9">
+                    <div class="d-flex justify-content-between" >
+                       <h4>Items</h4> <button @onclick="@AddItem" type="button" class="btn btn-primary btn-sm m-1"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            @foreach (var oi in position.PositionItemDTOs)
+            {
+                int i = 0;
+                <div class="form-group row mb-1">
+                    <label class="col-form-label col-1 text-end" for="@position.PositionId">Employee</label>
+                    <div class="col-3">
+                        <InputSelect @bind-Value="oi.EmployeeId" class="form-select">
+                            <option value="">Select</option>
+                            @if (employees is not null)
+                            {
+                                foreach (var p in employees)
+                                {
+                                    <option value="@p.EmployeeId">@p.EmployeeName</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(()=>oi.EmployeeId)" class="text-danger" />
+                    </div>
+                   
+                    <div class="col-1">
+                        <button @onclick="@(()=>RemoveItem(i++))" type="button" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            <div class="form-group row mb-1">
+
+                <div class="col-9">
+                   <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Save Position</button>
+                   </div>
+                </div>
+                <div class="col-12">
+                    <a href="/Positions/List" class="btn btn-link">Back to list</a>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private PositionEditDTO? position = new();
+    private Employee[]? employees;
+     protected override async Task OnInitializedAsync()
+    {
+        employees = await http.GetFromJsonAsync<Employee[]>("api/Employees");
+        position = await http.GetFromJsonAsync<PositionEditDTO>($"api/Positions/{id}");
+        if (position is not null)
+        {
+            EmployeePosition[]? data = await http.GetFromJsonAsync<EmployeePosition[]>($"api/Positions/OI/{id}");
+            if (data is not null)
+            {
+                foreach (var oi in data)
+                {
+                    position.PositionItemDTOs.Add(new PositionItemEditDTO { PositionId = oi.PositionId, EmployeeId = oi.EmployeeId });
+                }
+            }
+        }
+    }
+    private void AddItem()
+    {
+        position?.PositionItemDTOs.Add(new PositionItemEditDTO());
+    }
+    private void RemoveItem(int index)
+    {
+        if (position is not null && position.PositionItemDTOs.Count > 1)
+            ((List<PositionItemEditDTO>)position.PositionItemDTOs).RemoveAt(index);
+    }
+    private async Task SavePosition()
+    {
+        var response = await http.PutAsJsonAsync($"api/Positions/DTO/{id}", position);
+        if (response.IsSuccessStatusCode)
+        {
+            toastService.ShowSuccess("Data saved successfully", "Success");
+
+
+        }
+        else
+        {
+            toastService.ShowError("Failed to data.", "Error");
+        }
+        await Task.CompletedTask;
+    }
+}

@@ -1,0 +1,147 @@
+﻿@page "/Employees/Create"
+@using Blazor_CRUD.Shared.DTO;
+@using Blazor_CRUD.Shared.Models;
+@using System.Net.Http.Headers;
+<h3>Create</h3>
+@inject HttpClient http
+@inject IToastService toastService
+@inject NavigationManager navManager
+<div class="row">
+    <div class="col-12">
+        <EditForm Model="@employee" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
+            <div class="form-group row mb-1">
+                <label for="@employee.EmployeeName" class="col-form-label col-form-label-sm col-2 text-end">Employee Name</label>
+                <div class="col-4">
+                    <InputText @bind-Value="employee.EmployeeName" class="form-control form-control-sm" />
+                    <ValidationMessage For="@(()=> employee.EmployeeName)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Address" class="col-form-label col-form-label-sm col-2 text-end">Address</label>
+                <div class="col-4">
+                    <InputText @bind-Value="employee.Address" class="form-control form-control-sm" />
+                    <ValidationMessage For="@(()=> employee.Address)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.JoinDate" class="col-form-label col-form-label-sm col-2 text-end">Join Date</label>
+                <div class="col-4">
+                    <InputDate @bind-Value="employee.JoinDate" Type="InputDateType.Date" class="form-control form-control-sm" />
+                    <ValidationMessage For="@(()=> employee.JoinDate)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Salary" class="col-form-label col-form-label-sm col-2 text-end">Salary</label>
+                <div class="col-4">
+                    <InputNumber @bind-Value="employee.Salary"  class="form-control form-control-sm" />
+                    <ValidationMessage For="@(()=> employee.Salary)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Picture" class="col-form-label col-form-label-sm col-2 text-end">Picture</label>
+                <div class="col-4">
+                    <InputFile OnChange="@OnInputFileChange" class="form-control form-control-sm" />
+                    <input type="hidden" @bind="employee.Picture" class="form-control form-control-sm" />
+                    <ValidationMessage For="@(()=> employee.Picture)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.IsContinue" class="col-form-label col-form-label-sm col-2 text-end">Is Continuing</label>
+                <div class="col-4 pt-1">
+                    <InputCheckbox @bind-Value="@employee.IsContinue" />
+
+                </div>
+            </div>
+             <div class="row form-group mb-1">
+                <label class="col-form-label col-form-label-sm col-2 text-end">Company Name</label>
+                <div class="col-4">
+                    <InputSelect @bind-Value="@employee.CompanyId" class="form-select form-select-sm">
+                        <option value="">Select</option>
+                        @if (companys != null)
+                        {
+                            foreach (var c in companys)
+                            {
+                                <option value="@c.CompanyId">@c.CompanyName</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage class="text-danger small" For="@(()=> employee.CompanyId)" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+
+                <div class="col-4 offset-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </div>
+            <div class="col-12">
+                <a href="/Employees/List" class="btn btn-link">Back to list</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+@code {
+    EmployeeDTO employee = new();
+    private CompanyDTO[]? companys = default!;
+    IBrowserFile? selectedFile;
+    string? fileSelectMessage;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var data = await this.http.GetFromJsonAsync<CompanyDTO[]>("api/Companys");
+        //this.StateHasChanged();
+        this.companys = data;
+    }
+
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        employee.Picture = e.File.Name;
+        fileSelectMessage = null;
+        //this.StateHasChanged();
+    }
+    private async Task SaveAsync()
+    {
+
+        if (employee is not null)
+        {
+
+
+            var saveImage = await UploadItAsysnc();
+            employee.Picture = saveImage.StoredFileName;
+            var response = await http.PostAsJsonAsync<EmployeeDTO>("api/Employees", employee);
+            var emp = await response.Content.ReadFromJsonAsync<EmployeeDTO>();
+            toastService.ShowSuccess("Data Save successsfully", "Success");
+            navManager.NavigateTo("/Employees/List");
+        }
+
+
+    }
+    private async Task<ImageUploadResponse> UploadItAsysnc()
+    {
+        using (var ms = new MemoryStream())
+        {
+
+            if (selectedFile is not null)
+            {
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(selectedFile.OpenReadStream(long.MaxValue));
+
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(selectedFile.ContentType);
+                content.Add(content: fileContent, name: "\"file\"", fileName: selectedFile.Name);
+                var response = await http.PostAsync("api/Employees/Upload", content);
+                var r = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                return r == null ? new ImageUploadResponse() : r;
+            }
+            else
+            {
+                return new ImageUploadResponse();
+            }
+
+        }
+    }
+}

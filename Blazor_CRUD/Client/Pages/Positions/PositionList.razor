@@ -1,0 +1,66 @@
+﻿@page "/Positions/List"
+@using Blazor_CRUD.Shared.DTO;
+@inject HttpClient http
+@inject IToastService toastService
+<div class="row">
+    <div class="col-12">
+        <h3>Positions</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <a class="btn btn-primary btn-sm" href="/Positions/Create">Create New</a>
+        </div>
+        @if (positions is null)
+        {
+            <div>Loading..</div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Position Name</th>
+                        <th>Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in positions)
+                    {
+                        <tr>
+                            
+                            <td>@o.PositionName</td>                           
+                            <td>
+                                <a class="btn btn-link" href="/Positions/Details/@o.PositionId">Details</a>
+                            </td>
+                             <td>
+
+                                <a class="btn btn-primary btn-sm" href="/Positions/Edit/@o.PositionId">Edit</a>
+                                <button @onclick="@(()=>Delete(o.PositionId))" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    private PositionViewDTO[]? positions;
+    protected override async Task OnInitializedAsync()
+    {
+        positions = await http.GetFromJsonAsync<PositionViewDTO[]>("api/Positions/DTO");
+    }
+    private async Task Delete(int id)
+    {
+        var response = await http.DeleteAsync($"api/Positions/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            toastService.ShowSuccess("Data deleted successfully", "Success");
+            positions = await http.GetFromJsonAsync<PositionViewDTO[]>("api/Positions");
+        }
+        else
+        {
+            toastService.ShowError("Failed to delete data.", "Error");
+        }
+    }
+}

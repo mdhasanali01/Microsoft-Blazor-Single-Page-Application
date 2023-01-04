@@ -1,0 +1,147 @@
+﻿@page "/Employees/Edit/{id:int}"
+@using Blazor_CRUD.Shared.DTO;
+@using Blazor_CRUD.Shared.Models;
+@using System.Net.Http.Headers;
+@inject HttpClient http
+@inject IToastService toastService
+@if (employees is null)
+{
+    <div>Loading...</div>
+}
+else
+{
+<div class="row">
+    <div class="col-12">
+        <EditForm Model="@employees" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
+             <div class="form-group row mb-1">
+                    <label class="col-form-label col-2 text-end" for="@employees.EmployeeName">Employee name</label>
+                    <div class="col-4">
+                        <InputText @bind-Value="employees.EmployeeName" class="form-control" />
+                    <ValidationMessage For="@(()=>employees.EmployeeName)" class="text-danger" />
+                    </div>
+                </div>
+              <div class="form-group row mb-1">
+                    <label class="col-form-label col-2 text-end" for="@employees.Address">Address</label>
+                    <div class="col-4">
+                        <InputText @bind-Value="employees.Address" class="form-control" />
+                    <ValidationMessage For="@(()=>employees.Address)" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label for="@employees.JoinDate" class="col-form-label col-form-label-sm col-2 text-end">Join Date</label>
+                    <div class="col-4">
+                        <InputDate @bind-Value="employees.JoinDate" Type="InputDateType.Date" class="form-control form-control-sm" />
+                        <ValidationMessage For="@(()=> employees.JoinDate)" class="text-danger" />
+                    </div>
+                </div>
+            <div class="form-group row mb-1">
+                <label class="col-form-label col-2 text-end" for="@employees.Salary">Salary</label>
+                <div class="col-4">
+                    <InputNumber @bind-Value="employees.Salary" class="form-control" />
+                    <ValidationMessage For="@(()=>employees.Salary)" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employees.IsContinue" class="col-form-label col-form-label-sm col-2 text-end">Is Continuing</label>
+                <div class="col-4 pt-1">
+                    <InputCheckbox @bind-Value="@employees.IsContinue" />
+
+                </div>
+            </div>
+            <div class="row form-group mb-1">
+                <label class="col-form-label col-form-label-sm col-2 text-end">Company Name</label>
+                <div class="col-4">
+                    <InputSelect @bind-Value="@employees.CompanyId" class="form-select form-select-sm">
+                        <option value="">Select</option>
+                        @if (companys != null)
+                        {
+                            foreach (var g in companys)
+                            {
+                                <option value="@g.CompanyId">@g.CompanyName</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage class="text-danger small" For="@(()=> employees.CompanyId)" />
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+
+                <div class="col-4 offset-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+}
+@code {
+    [Parameter]
+    public int id { get; set; }
+    EmployeeEdit employees = null!;
+    IBrowserFile? selectedFile;
+    string? fileSelectMessage;
+    IJSObjectReference module = null!;
+    private CompanyDTO[]? companys = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        
+        companys = await this.http.GetFromJsonAsync<CompanyDTO[]>("api/Employees/Include");
+        var data = await http.GetFromJsonAsync<EmployeeEdit>($"api/Employees/{id}");
+        if (data is not null)
+        {
+            employees = data;
+        }
+    }
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+
+        fileSelectMessage = null;
+        //this.StateHasChanged();
+    }
+    private async Task SaveAsync()
+    {
+
+        if (employees is not null)
+        {
+            if (selectedFile is not null)
+            {
+                var saveImage = await UploadItAsysnc();
+                employees.Picture = saveImage.StoredFileName;
+            }
+            var response = await http.PutAsJsonAsync<EmployeeEdit>($"api/Employees/{id}", employees);
+            var emp = await response.Content.ReadFromJsonAsync<EmployeeEdit>();
+            if (response.IsSuccessStatusCode)
+            {
+                toastService.ShowSuccess("Data saved successsfully", "Success");
+            }
+            //navManager.NavigateTo("/Tourists/List");
+        }
+
+
+    }
+    private async Task<ImageUploadResponse> UploadItAsysnc()
+    {
+        using (var ms = new MemoryStream())
+        {
+
+            if (selectedFile is not null)
+            {
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(selectedFile.OpenReadStream(long.MaxValue));
+
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(selectedFile.ContentType);
+                content.Add(content: fileContent, name: "\"file\"", fileName: selectedFile.Name);
+                var response = await http.PostAsync("api/Employees/Upload", content);
+                var r = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                return r == null ? new ImageUploadResponse() : r;
+            }
+            else
+            {
+                return new ImageUploadResponse();
+            }
+
+        }
+    }
+}

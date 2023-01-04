@@ -1,0 +1,55 @@
+﻿@page "/Companys/List"
+@using Blazor_CRUD.Shared.Models;
+<div class="row">
+    <div class="col-12">
+        <h3 class="bg-info text-center">Companys</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <a href="/Companys/Create" class="btn btn-primary btn-sm">Create</a>
+        </div>
+        @if (companys is null)
+        {
+            <div>Loading...</div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center">Customer name</th>
+                        <th class="text-center">Address</th>
+                        <th class="text-center">Company Type</th>
+                        <th class="text-center">E-mail</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var c in companys)
+                    {
+                        <tr>
+                            <td>@c.CompanyName</td>
+                            <td>@c.Address</td>
+                            <td>@c.Type</td>
+                            <td>@c.Email</td>
+                            <th>
+                                <a class="btn btn-success btn-sm" href="/Companys/edit/@c.CompanyId">Edit</a>
+                                <a class="btn btn-danger btn-sm " href="/Companys/delete/@c.CompanyId">Delete</a>
+                            </th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+@inject HttpClient http
+@code {
+    private Company[]? companys;
+    protected override async Task OnInitializedAsync()
+    {
+        companys = await this.http.GetFromJsonAsync<Company[]>("api/Companys");
+    }
+
+
+}
+

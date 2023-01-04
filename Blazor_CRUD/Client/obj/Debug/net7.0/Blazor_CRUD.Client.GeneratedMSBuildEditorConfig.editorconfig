@@ -1,0 +1,85 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = Blazor_CRUD.Client
+build_property.RootNamespace = Blazor_CRUD.Client
+build_property.ProjectDir = G:\Blazor Final\Blazor_CRUD\Blazor_CRUD\Client\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = G:\Blazor Final\Blazor_CRUD\Blazor_CRUD\Client
+build_property._RazorSourceGeneratorDebug = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = RWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Companys/CompanyList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcGFueXNcQ29tcGFueUxpc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Companys/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcGFueXNcQ3JlYXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Companys/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcGFueXNcRGVsZXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Companys/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcGFueXNcRWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3JlYXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Employees/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW1wbG95ZWVzXENyZWF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Employees/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW1wbG95ZWVzXERlbGV0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Employees/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW1wbG95ZWVzXEVkaXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Employees/EmployeeList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW1wbG95ZWVzXEVtcGxveWVlTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Positions/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUG9zaXRpb25zXERldGFpbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Pages/Positions/PositionList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUG9zaXRpb25zXFBvc2l0aW9uTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Blazor Final/Blazor_CRUD/Blazor_CRUD/Client/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 

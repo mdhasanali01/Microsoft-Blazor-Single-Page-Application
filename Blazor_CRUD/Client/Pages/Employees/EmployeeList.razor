@@ -1,0 +1,65 @@
+﻿@page "/Employees/List"
+@using Blazor_CRUD.Shared.Models;
+<h3>EmployeeList</h3>
+@inject HttpClient http
+@inject IConfiguration config
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-end mb-1">
+            <NavLink class="btn btn-primary btn-sm" href="/Employees/Create">Create New</NavLink>
+        </div>
+        @if (employees is null)
+        {
+            <div>Loading</div>
+        }
+        else if (employees.Length == 0)
+        {
+            <div class="alert alert-warning" role="alert">
+                No employee record found!
+            </div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center">Image</th>
+                        <th class="text-center">Employee Name</th>
+                        <th class="text-center">Address</th>
+                        <th class="text-center">Join Date</th>
+                        <th class="text-center">Salary</th>
+                        <th class="text-center">Is Continuing</th>
+                        <th class="text-center">Company Name</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emp in employees)
+                    {
+                        <tr>
+                            <td><img style="width:40px" src="/Uploads/@emp.Picture" class="rounded-circle" /></td>
+                            <td>@emp.EmployeeName</td>
+                            <td>@emp.Address</td>
+                            <td>@emp.JoinDate.ToString("yyyy-MM-dd")</td>
+                            <td>@(emp.Salary.ToString("0.00"))</td>
+                            <td>@(emp.IsContinue ? "Yes" : "No")</td>
+                            <td>@emp.CompanyId</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="/Employees/edit/@emp.EmployeeId">Edit</a>
+                                <a class="btn btn-danger btn-sm" href="/Employees/delete/@emp.EmployeeId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    private Employee[]? employees;
+    protected override async Task OnInitializedAsync()
+    {
+        this.employees = await this.http.GetFromJsonAsync<Employee[]>("api/Employees");
+    }
+}

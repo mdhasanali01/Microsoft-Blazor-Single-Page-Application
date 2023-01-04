@@ -1,0 +1,87 @@
+﻿@page "/Companys/Edit/{id:int}"
+@using Blazor_CRUD.Shared.Models;
+@inject HttpClient http
+@inject IToastService toastService
+<div class="row">
+    <div class="col-12">
+        @if (company is null)
+        {
+            <div>Loading...</div>
+        }
+        else
+        {
+            <EditForm Model="@company" OnValidSubmit="SaveCustomer">
+                <h3>Create Customer</h3>
+                <DataAnnotationsValidator />
+                <div class="form-group row mb-1">
+                    <label class="col-form-label col-2 text-end" for="@company.CompanyName">Company name</label>
+                    <div class="col-4">
+                        <InputText @bind-Value="company.CompanyName" class="form-control" />
+                        <ValidationMessage For="@(()=>company.CompanyName)" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-form-label col-2 text-end" for="@company.Address">Customer name</label>
+                    <div class="col-4">
+                        <InputTextArea @bind-Value="company.Address" class="form-control" />
+                        <ValidationMessage For="@(()=>company.Address)" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label for="@company.Type" class="col-form-label col-form-label-sm col-2 text-end">Type</label>
+                    <div class="col-4">
+                        <InputSelect @bind-Value="company.Type" class="form-select form-select-sm">
+                            <option value="0">Select</option>
+                            @if (TypeNames is not null)
+                            {
+                                @for (var i = 0; i < TypeNames.Length; i++)
+                                {
+                                    <option value="@TypeNames[i]">@TypeNames[i]</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(()=> company.Type)" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-form-label col-2 text-end" for="@company.Email">Customer name</label>
+                    <div class="col-4">
+                        <InputText @bind-Value="company.Email" class="form-control" />
+                        <ValidationMessage For="@(()=>company.Email)" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+
+                    <div class="col-4 offset-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+
+                    </div>
+                </div>
+            </EditForm>
+        }
+    </div>
+    <div class="col-12">
+        <a href="/Companys/List" class="btn btn-link">Back to list</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    string[]? TypeNames;
+    private Company? company = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        TypeNames = Enum.GetNames(typeof(Blazor_CRUD.Shared.DTO.Type));
+        company = await http.GetFromJsonAsync<Company>($"api/Companys/{id}");
+    }
+    private async Task SaveCustomer()
+    {
+        var respose = await http.PutAsJsonAsync($"api/Companys/{id}", company);
+        if (respose.IsSuccessStatusCode)
+        {
+            toastService.ShowSuccess("Data updated successsfully", "Success");
+           
+        }
+    }
+}

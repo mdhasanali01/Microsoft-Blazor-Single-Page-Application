@@ -1,0 +1,97 @@
+﻿@page "/Employees/Delete/{id:int}"
+@using Blazor_CRUD.Shared.Models;
+@inject HttpClient http;
+@inject NavigationManager navManager
+@if (employee is null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-9">
+            <h3>Are you sure to delete?</h3>
+
+            <div class="form-group row mb-1">
+                <label for="@employee.EmployeeName" class="col-form-label col-form-label-sm col-2 text-end">Name</label>
+                <div class="col-4">
+                    @employee.EmployeeName
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Address" class="col-form-label col-form-label-sm col-2 text-end">Address</label>
+                <div class="col-4">
+                    @employee.Address
+
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.JoinDate" class="col-form-label col-form-label-sm col-2 text-end">Join Date</label>
+                <div class="col-4">
+                    @employee.JoinDate.ToString("yyyy-MM-dd");
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Salary" class="col-form-label col-form-label-sm col-2 text-end">Salary</label>
+                <div class="col-4">
+                    @employee.Salary
+
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.Picture" class="col-form-label col-form-label-sm col-2 text-end">Name</label>
+                <div class="col-4">
+                    <img src="Uploads/@employee.Picture" style="width: 100px" class="img-thumbnail" />
+
+
+                </div>
+
+            </div>
+            <div class="form-group row mb-1">
+                <label for="@employee.IsContinue" class="col-form-label col-form-label-sm col-2 text-end">Is Continuing</label>
+                <div class="col-4 pt-1">
+                    @(employee.IsContinue ? "Yes" : "No")
+
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+                <label class="col-form-label col-2 text-end" for="@employee.CompanyId">Company Type</label>
+                <div class="col-4">
+                    @employee.CompanyId
+
+                </div>
+            </div>
+            <div class="form-group row mb-1">
+
+                <div class="col-4 offset-2">
+                    <button @onclick="@DeleteIt" type="button" class="btn btn-danger btn-sm">Confirm delete</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    Employee employee = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //this.StateHasChanged();
+        var data = await http.GetFromJsonAsync<Employee>($"api/Employees/{id}");
+        if (data is not null)
+        {
+            employee = data;
+        }
+    }
+    private async Task DeleteIt()
+    {
+        var response = await this.http.DeleteAsync($"api/Employees/{id}");
+        navManager.NavigateTo("/Employees/List");
+    }
+}
+

@@ -1,0 +1,64 @@
+﻿@page "/Positions/Details/{id:int}"
+@using Blazor_CRUD.Shared.DTO;
+@inject HttpClient http
+<div class="row">
+    <div class="row">
+        <h3>Position Details</h3>
+        @if (position is null)
+        {
+            <div>Loading...</div>
+        }
+        else
+        {
+            <div class="row mb-1">
+                <label class="col-2 text-end">Position Name:</label>
+                <div class="col-10">
+                    @position.PositionName
+                </div>
+            </div>
+            @if (orderItems is not null)
+            {
+                <div><h4>Employee Details</h4></div>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Addres</th>
+                            <th>Salary</th>
+                            <td>Is Continue</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var oi in orderItems)
+                        {
+                            <tr>
+                                <td>@oi.EmployeeName</td>
+                                <td>@oi.Address</td>
+                                <td>@(oi.Salary.ToString("0.00"))</td>
+                                <td>@(oi.IsContinue ? "Yes" : "No")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+    </div>
+</div>
+<div class="col-12">
+    <a href="/Positions/List" class="btn btn-link">Back to list</a>
+</div>
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private PositionViewDTO? position;
+    private PositionItemViewDTO[]? orderItems;
+    protected override async Task OnInitializedAsync()
+    {
+        position = await http.GetFromJsonAsync<PositionViewDTO>($"api/Positions/DTO/{id}");
+        if (position is not null)
+        {
+            orderItems = await http.GetFromJsonAsync<PositionItemViewDTO[]>($"api/Positions/Items/{id}");
+        }
+    }
+}
+
